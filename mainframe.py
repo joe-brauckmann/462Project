@@ -63,6 +63,8 @@ print(bitstream)
 #################################
 #Convert to Complex Symbols
 complexSym = []
+realVals = []
+imagVals = []
 for j in range(int(len(MSRG)/2)):
 	if bitstream[j*2] == 0:
 		if bitstream[j*2 + 1] == 0:
@@ -80,6 +82,8 @@ for j in range(int(len(MSRG)/2)):
 			y = np.sin(225)
 	complexSym.append(float(x))
 	complexSym.append(float(y))
+	realVals.append(float(x))
+	imagvals.append(float(y))
 
 print(complexSym)
 
