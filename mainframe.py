@@ -57,3 +57,27 @@ print(bitstream)
     for i in range(31):
         print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d"% (i, reg1, reg2, reg3, reg4, reg5)) 
         reg1, reg2, reg3, reg4, reg5 = reg5, reg1, (reg5+reg2)%2, reg3, reg4   
+	
+#################################
+#Convert to Complex Symbols
+complexSym = []
+for j in range(int(len(MSRG)/2)):
+	if bitstream[j*2] == 0:
+		if bitstream[j*2 + 1] == 0:
+			x = np.cos(45)
+			y = np.sin(45)
+		else:
+			x = np.cos(315)
+			y = np.sin(315)
+	else:
+		if bitstream[j*2 + 1] == 0:
+			x = np.cos(135)
+			y = np.sin(135)
+		else:
+			x = np.cos(225)
+			y = np.sin(225)
+	complexSym.append(float(x))
+	complexSym.append(float(y))
+
+print(complexSym)
+
