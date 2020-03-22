@@ -13,7 +13,7 @@ f = open("Proj1TestDataASCII.txt", "r")
 bitstream = []
 
 #while(True):
-for x in range(100):
+for i in range(100):
     try:
 		output = (f.read(16))
 		bitstream.append(int(output[3]))
