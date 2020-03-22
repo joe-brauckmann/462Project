@@ -5,6 +5,23 @@
 #Chris Magtibay
 #Max Zhang
 #Sean Sacchetti
+
+#Read input file
+f = open("Proj1TestDataASCII.txt", "r")
+bitstream = []
+
+#while(True):
+for x in range(100):
+    try:
+		output = (f.read(16))
+		bitstream.append(int(output[3]))
+	except:
+		break
+	
+print(bitstream)
+
+
+
 #Polynomial were using, f(x) = 1 + x + x^2 + x^ 5 + x^19
 ############  SSRG  ####################
     print("SSRG OUTPUT\n")
