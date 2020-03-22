@@ -80,10 +80,9 @@ for j in range(int(len(MSRG)/2)):
 		else:
 			x = np.cos(225)
 			y = np.sin(225)
-	complexSym.append(float(x))
-	complexSym.append(float(y))
+	complexSym.append(float(x) + 1j * float(y))
 	realVals.append(float(x))
-	imagvals.append(float(y))
+	imagVals.append(float(y))
 
 print(complexSym)
 
