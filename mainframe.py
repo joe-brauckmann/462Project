@@ -6,6 +6,8 @@
 #Max Zhang
 #Sean Sacchetti
 
+import numpy as np
+
 #Read input file
 f = open("Proj1TestDataASCII.txt", "r")
 bitstream = []
