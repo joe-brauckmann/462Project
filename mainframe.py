@@ -2,7 +2,7 @@
 #Brandon Bastian
 #Gavin Fisher
 #Joe Brauckman
-#Chris Magtibay
+#Christopher Magtibay
 #Max Zhang
 #Sean Sacchetti
 
@@ -40,6 +40,20 @@ print(bitstream)
     reg3 = 0
     reg4 = 0
     reg5 = 0
+    reg6 = 0
+    reg7 = 0
+    reg8 = 0
+    reg9 = 0
+    reg10 = 0
+    reg11 = 0
+    reg12 = 0
+    reg13 = 0
+    reg14 = 0
+    reg15 = 0
+    reg16 = 0
+    reg17 = 0
+    reg18 = 0
+    reg19 = 0
     for i in range(31):
         print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d"% (i, reg1, reg2, reg3, reg4, reg5)) 
         reg1, reg2, reg3, reg4, reg5 = reg5, reg1, (reg5+reg2)%2, reg3, reg4   
