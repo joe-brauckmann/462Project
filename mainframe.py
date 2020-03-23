@@ -25,18 +25,6 @@ print(bitstream)
 
 
 #Polynomial were using, f(x) = 1 + x + x^2 + x^ 5 + x^19
-
-############  SSRG  ####################
-#    print("SSRG OUTPUT\n")
-#    reg1 = 1
-#    reg2 = 0
-#    reg3 = 0
-#    reg4 = 0
-#    reg5 = 0
-#    for i in range(31):
-#        print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d"% (i, reg1, reg2, reg3, reg4, reg5)) 
-#        reg1, reg2, reg3, reg4, reg5 = (reg2+reg5)%2, reg1, reg2, reg3, reg4
-#^ commented out this code for right now because I don't think we need it, but uncomment it if I am wrong. -Joe	
 ############  MSRG  ####################
     print("\nMSRG OUTPUT\n")
     reg1 = 1
@@ -58,7 +46,6 @@ print(bitstream)
     reg17 = 0
     reg18 = 0
     reg19 = 0
-## 1+x+x^2+x^5+x^19
     for i in range(31):
         ##print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d  reg6: %d reg7: %d reg8: %d reg9: %d reg10: %d reg11: %d reg12: %d reg13: %d reg14: %d reg15: %d reg16: %d reg17: %d reg18: %d reg19: %d "% (i, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18, reg19)) 
         reg1,reg2,reg3,reg4,reg5,reg6,reg7,reg8,reg9,reg10,reg11,reg12,reg13, reg14,reg15,reg16,reg17,reg18,reg19  = reg19, (reg1+reg19)%2, (reg2+reg19)%2, reg3, reg4, (reg5+reg19)%2, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18   
