@@ -76,3 +76,6 @@ for j in range(int(len(MSRG)/2)):
 
 print(complexSym)
 
+###########IFFT##################
+#Uses IFFT to encode QPSK output array (Not entirely sure if correct, yet..)
+ifftOut = np.fft.ifft(complexSym)
