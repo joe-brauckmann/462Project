@@ -111,10 +111,13 @@ for j in range(int(len(Encrypt)/2)):
 ifftList = []
 
 for k in range(math.ceil(len(complexSym)/1024)):
-	l = complexSym[1024*k:1024*k+1023]
-	while (len(l) < 1024):
+	l = complexSym[1024*k:1024*k+954]
+	while (len(l) < 954):
 		l.append(0)
-	ifftList.append(l)
+	m = l[-70:]
+	for n in l:
+		m.append(n)
+	ifftList.append(m)
 
 ###########IFFT##################
 #NICK VERIFIED THIS IS CORRECT
