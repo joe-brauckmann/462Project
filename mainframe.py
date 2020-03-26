@@ -13,12 +13,13 @@ import math
 
 
 # read matlab file directly use 
-# data = scipy.io.loadmat(Filename)[Matlab variable name][0].tolist()
+bitstream = []
+bitstream = scipy.io.loadmat("Proj1TestData.mat")[Matlab variable name][0].tolist()
 # "so much better than fucking around with text files 
 
 #Read input file
 f = open("Proj1TestDataASCII.txt", "r")
-bitstream = []
+
 
 #scipy.io.
 while(True):
