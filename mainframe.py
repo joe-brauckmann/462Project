@@ -73,6 +73,9 @@ Encrypt =[]
         reg1,reg2,reg3,reg4,reg5,reg6,reg7,reg8,reg9,reg10,reg11,reg12,reg13, reg14,reg15,reg16,reg17,reg18,reg19  = reg19, (reg1+reg19)%2, (reg2+reg19)%2, reg3, reg4, (reg5+reg19)%2, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18   
     for i in range(len(bitstream)):
 	Encrypt.append(bitstream[i]^PnSeq[i%(2**19-1)])
+	
+print(PnSeq[:50]) #print first 50
+exit()
 #################################
 #Convert to Complex Symbols
 # NICK SAID
