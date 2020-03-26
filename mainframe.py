@@ -77,9 +77,10 @@ for j in range(int(len(MSRG)/2)):
 ifftList = []
 
 for k in range(math.ceil(len(complexSym)/1024)):
-	l = complexSym[1024*k:1024*k+1023]
-	while (len(l) < 1024):
+	l = complexSym[1024*k:1024*k+954]
+	while (len(l) < 954):
 		l.append(0)
+	l.append(l[0:70])	     
 	ifftList.append(l)
 
 ###########IFFT##################
