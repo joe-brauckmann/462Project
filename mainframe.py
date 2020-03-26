@@ -104,12 +104,12 @@ print("cyclic list")
 
 cyclicList = []
 for m in range(len(ifftList)):
-    y = ifftList[1024*m:m*1024+1024]
-    x = y[-70:]
-    x.append(y)
-    cyclicList.append(x)
+    y = ifftList[m][-70:]
+    x = ifftList[m][0:1023]
+    np.append(y,x)
+    cyclicList.append(y)
 
-print(cyclicList[0])
+
 
     
 exit()
