@@ -6,14 +6,18 @@
 #Max Zhang
 #Sean Sacchetti
 
+
+#Python3
 import numpy as np
 import scipy.io
 import math
 
+#Data submission: PN seq, 
+
 
 ################Open File################
 bitstream = []
-bitstream = scipy.io.loadmat("Proj1TestData.mat")['TestData'][0].tolist()
+bitstream = scipy.io.loadmat("Proj1InputData.mat")['InputData'][0].tolist()
     
 #print(bitstream)
 
@@ -51,6 +55,8 @@ for i in range(2**19-1):
 for i in range(len(bitstream)):
     Encrypt.append(bitstream[i]^PnSeq[i%(2**19-1)])
     
+scipy.io.savemat('PnSeq.mat', dict(PnSeq=np.array([float(x) for x in PnSeq])), do_compression=True, oned_as='row')
+scipy.io.savemat('EncryptedData.mat', dict(Encrypt=np.array([float(x) for x in Encrypt])), do_compression=True, oned_as='row')
 
 #########QPSK Symbols##############
 complexSym = []
@@ -75,21 +81,33 @@ for j in range(int(len(Encrypt)/2)):
             
     complexSym.append(complex(x,y))
 
-ifftList = []
+
+scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array(complexSym)), do_compression=True, oned_as='row')
 
 ################IFFT#########################
+ifftList = []
 i = [0]
 for k in range(math.ceil(len(complexSym)/1024)):
     l = complexSym[1024*k:1024*k+1024]
     ifftList.append(np.fft.ifft(l))
 
+#ifftdummy = ifftList.reshape(-1)
+
+scipy.io.savemat('OFDMSymb.mat', dict(ifftList=np.array((ifftList)), do_compression=True, oned_as='row'))
+
+
 ################Cyclic Prefix################
+
 cyclicList = []
+
 for m in range(len(ifftList)):
     y = ifftList[m][-70:]
     x = ifftList[m][0:1023]
     np.append(y,x)
     cyclicList.append(y)
+
+scipy.io.savemat('TransSym.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
+
 
 ################Up-Convert#################
 f = 100000000
@@ -102,4 +120,7 @@ for n in range(len(cyclicList)):
         y *= math.sin(2*math.pi*f*(n*1094+o+1)*symTime)
         cyclicList[n][o] = complex(x,y)
         
+scipy.io.savemat('UpConvertedSym.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
+
+
 exit()
