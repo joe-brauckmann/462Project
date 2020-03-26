@@ -80,8 +80,10 @@ for k in range(math.ceil(len(complexSym)/1024)):
 	l = complexSym[1024*k:1024*k+954]
 	while (len(l) < 954):
 		l.append(0)
-	l.append(l[0:70])	     
-	ifftList.append(l)
+	m = l[-70:]
+	for n in l:
+		m.append(n)
+	ifftList.append(m)
 
 ###########IFFT##################
 #Uses IFFT to encode QPSK output array (Not entirely sure if correct, yet..)
