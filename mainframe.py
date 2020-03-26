@@ -7,6 +7,7 @@
 #Sean Sacchetti
 
 import numpy as np
+import math
 #import scipy.io
 # gonna need to install it too
 
