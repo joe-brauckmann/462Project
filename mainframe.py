@@ -104,9 +104,9 @@ for j in range(int(len(MSRG)/2)):
 			#complex(1,2)
 			#this is actually 1+2i 
 			
-	complexSym.append(float(x) + 1j * float(y))
-	realVals.append(float(x))
-	imagVals.append(float(y) * 1j)
+	complexSym.append(complex(x,y))
+	#realVals.append(float(x))
+	#imagVals.append(float(y) * 1j)
 
 ifftList = []
 
