@@ -13,22 +13,11 @@ import math
 
 
 # read matlab file directly use 
-bitstream = []
-bitstream = scipy.io.loadmat("Proj1TestData.mat")[Matlab variable name][0].tolist()
+# data = scipy.io.loadmat(Filename)[Matlab variable name][0].tolist()
 # "so much better than fucking around with text files 
 
-#Read input file
-f = open("Proj1TestDataASCII.txt", "r")
-
-
-#scipy.io.
-while(True):
-#for i in range(100):
-    try:
-        output = (f.read(16))
-        bitstream.append(int(output[3]))
-    except:
-        break
+bitstream = []
+bitstream = scipy.io.loadmat("Proj1TestData.mat")['TestData'][0].tolist()
     
 #print(bitstream)
 
@@ -105,14 +94,22 @@ for j in range(int(len(Encrypt)/2)):
 
 ifftList = []
 
+print("ifft list")
+i = [0]
 for k in range(math.ceil(len(complexSym)/1024)):
-	l = complexSym[1024*k:1024*k+1024]
-	ifftList.append(np.fft.ifftn(l))
+    l = complexSym[1024*k:1024*k+1024]
+    ifftList.append(np.fft.ifft(l))
+
+print("cyclic list")
 
 cyclicList = []
 for m in range(len(ifftList)):
-    y = ifftList[m][-70:]
-    y.append(ifftList[m])
-    cyclicList.append(y)
+    y = ifftList[1024*m:m*1024+1024]
+    x = y[-70:]
+    x.append(y)
+    cyclicList.append(x)
+
+print(cyclicList[0])
+
     
 exit()
