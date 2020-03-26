@@ -76,6 +76,7 @@ for j in range(int(len(MSRG)/2)):
 
 ifftList = []
 
+#########Cyclic prefix and padding##########
 for k in range(math.ceil(len(complexSym)/1024)):
 	l = complexSym[1024*k:1024*k+954]
 	while (len(l) < 954):
