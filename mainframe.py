@@ -9,13 +9,9 @@
 import numpy as np
 import scipy.io
 import math
-# gonna need to install it too
 
 
-# read matlab file directly use 
-# data = scipy.io.loadmat(Filename)[Matlab variable name][0].tolist()
-# "so much better than fucking around with text files 
-
+################Open File################
 bitstream = []
 bitstream = scipy.io.loadmat("Proj1TestData.mat")['TestData'][0].tolist()
     
@@ -25,7 +21,7 @@ bitstream = scipy.io.loadmat("Proj1TestData.mat")['TestData'][0].tolist()
 
 #Polynomial were using, f(x) = 1 + x + x^2 + x^ 5 + x^19
 ############  MSRG  ####################
-print("\nMSRG OUTPUT\n")
+#print("\nMSRG OUTPUT\n")
 reg1 = 1
 reg2 = 0
 reg3 = 0
@@ -46,17 +42,6 @@ reg17 = 0
 reg18 = 0
 reg19 = 0
 
-#Instead of for loop, this shifting should happen every time you "call it" 
-# sequence is 2^19 - 1 long, after this many iterations the shifting will start to repeat
-# the nice way to do this is
-# for i in range(2**19-1) is the correct way 
-# have a list thats 2^19 -1 and have to loop fill the list
-# for grading we have to submit the Pn sequence so its easy to store in a list then submit that
-# adding red 19 to the list 
-# whatever is in 19 at the start is the first thing of the Pn sequence, then shift take... forever 
-# xor each bit of data with Pn sequence
-# data is reallllllly big like 2 million and Pn sequence is roughly 500k so we need to xor first 500k of data with Pn then shift and repeat
-# need to submut array of encrypted data which we should store in another array.
 PnSeq = []
 Encrypt =[]
 for i in range(2**19-1):
@@ -66,11 +51,9 @@ for i in range(2**19-1):
 for i in range(len(bitstream)):
     Encrypt.append(bitstream[i]^PnSeq[i%(2**19-1)])
     
-#print(PnSeq[:50]) #print first 50
-#print(Encrypt[-50:])
+
+#########QPSK Symbols##############
 complexSym = []
-realVals = []
-imagVals = []
 for j in range(int(len(Encrypt)/2)):
     if Encrypt[j*2] == 0:
         if Encrypt[j*2 + 1] == 0:
@@ -94,14 +77,13 @@ for j in range(int(len(Encrypt)/2)):
 
 ifftList = []
 
-print("ifft list")
+################IFFT#########################
 i = [0]
 for k in range(math.ceil(len(complexSym)/1024)):
     l = complexSym[1024*k:1024*k+1024]
     ifftList.append(np.fft.ifft(l))
 
-print("cyclic list")
-
+################Cyclic Prefix################
 cyclicList = []
 for m in range(len(ifftList)):
     y = ifftList[m][-70:]
@@ -109,7 +91,15 @@ for m in range(len(ifftList)):
     np.append(y,x)
     cyclicList.append(y)
 
-
-
-    
+################Up-Convert#################
+f = 100000000
+symTime = 1/(1024*10000)
+for n in range(len(cyclicList)):
+    for o in range(len(cyclicList[n])):
+        x = cyclicList[n][o].real
+        y = cyclicList[n][o].imag
+        x *= math.cos(2*math.pi*f*(n*1094+o+1)*symTime)
+        y *= math.sin(2*math.pi*f*(n*1094+o+1)*symTime)
+        cyclicList[n][o] = complex(x,y)
+        
 exit()
