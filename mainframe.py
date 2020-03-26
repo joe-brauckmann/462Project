@@ -86,19 +86,19 @@ realVals = []
 imagVals = []
 for j in range(int(len(MSRG)/2)):
 	if bitstream[j*2] == 0:
-		if bitstream[j*2 + 1] == 0:
-			x = np.cos(45)
-			y = np.sin(45)
-		else:
-			x = np.cos(315)
-			y = np.sin(315)
-	else:
-		if bitstream[j*2 + 1] == 0:
-			x = np.cos(135)
-			y = np.sin(135)
-		else:
-			x = np.cos(225)
-			y = np.sin(225)
+        	if bitstream[j*2 + 1] == 0:
+           		x = np.cos(math.pi/4)
+            		y = np.sin(math.pi/4)
+        	else:
+            		x = np.cos(math.pi*7/4)
+            		y = np.sin(math.pi*7/4)
+    	else:
+        	if bitstream[j*2 + 1] == 0:
+            		x = np.cos(math.pi*3/4)
+            		y = np.sin(math.pi*3/4)
+        	else:
+           		x = np.cos(math.pi*5/4)
+            		y = np.sin(math.pi*5/4)
 			#example. 
 			#complex(1,2)
 			#this is actually 1+2i 
