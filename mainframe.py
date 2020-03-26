@@ -7,6 +7,7 @@
 #Sean Sacchetti
 
 import numpy as np
+import math
 
 #Read input file
 f = open("Proj1TestDataASCII.txt", "r")
