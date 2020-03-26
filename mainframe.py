@@ -74,8 +74,14 @@ for j in range(int(len(MSRG)/2)):
 	realVals.append(float(x))
 	imagVals.append(float(y) * 1j)
 
-print(complexSym)
+ifftList = []
+
+for k in range(math.ceil(len(complexSym)/1024)):
+	l = complexSym[1024*k:1024*k+1023]
+	while (len(l) < 1024):
+		l.append(0)
+	ifftList.append(l)
 
 ###########IFFT##################
 #Uses IFFT to encode QPSK output array (Not entirely sure if correct, yet..)
-ifftOut = np.fft.ifft(complexSym)
+ifftOut = np.fft.ifft(ifftList)
