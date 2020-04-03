@@ -23,8 +23,10 @@ RxTransposed = np.transpose(scipy.io.loadmat('ProjRxSymbStream.mat')['RxSymbStre
 # Each list is 1024 bytes 
 noPrefix = []
 for i in range(len(RxTransposed)):
-    noPrefix += RxTransposed[i][70:]
+    noPrefix += RxTransposed[1094*i+70:1094*i+1094]
+
+noPrefix = np.reshape(noPrefix, -1)
 
 
 ################ Save output to matlab file ################
-scipy.io.savemat('RxOFDMSymb.mat',dict(OFDMSymbStream=np.array(noPrefix)),oned_as='row')
+scipy.io.savemat('RxOFDMSymb.mat', dict(OFDMSymbStream=np.array((noPrefix))), do_compression=True, oned_as='row')
