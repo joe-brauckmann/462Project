@@ -14,7 +14,6 @@ import scipy.io
 import math
 
 ################ Open the file & read it using SCIPY library ################
-#Rxstream = scipy.io.loadmat('ProjectRxSymbStream.mat')['RxSymbStream']
 RxTransposed = np.transpose(scipy.io.loadmat('ProjRxSymbStream.mat')['RxSymbStream']).tolist()
 
 
