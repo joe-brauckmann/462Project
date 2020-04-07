@@ -14,7 +14,7 @@ import scipy.io
 import math
 
 ################ Open the file & read it using SCIPY library ################
-RxTransposed = np.transpose(scipy.io.loadmat('ProjRxSymbStream.mat')['RxSymbStream']).tolist()
+RxTransposed = np.transpose(scipy.io.loadmat('Proj2RxSymbStream.mat')['RxSymbStream']).tolist()
 
 
 ################ Cyclic Prefix ################
