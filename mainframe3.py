@@ -15,7 +15,7 @@ import math
 
 #################### Open IFFT OFDM Symbol Stream ######################
 OFDMSymb = []
-OFDMSymb = scipy.io.loadmat("ProjectIFFTOfdmSymbolStream.mat")['OFDMSymbStream'][0].tolist()
+OFDMSymb = scipy.io.loadmat("RxOFDMSymb.mat")['OFDMSymbStream'][0].tolist()
 
 #################### Use FFT function ######################
 fftList = []
@@ -25,7 +25,8 @@ for i in range(math.ceil(len(OFDMSymb)/1024)):
     fftList.append(temp)
 
 ################### Create 2-D array for output ########################
-fftList = np.reshape(fftList, (1024,10000))
+fftList = np.transpose(fftList)
+
 
 ################### Save 2-D array to matlab file ######################
 scipy.io.savemat('FFTSymb.mat', dict(FFTSymb=np.array((fftList))), do_compression=True, oned_as='row')
