@@ -13,15 +13,20 @@ import numpy as np
 import scipy.io
 import math
 
+
+
+################## OFDM Modulation to Encrypted Data ##########################
 INarray = []
-INarray = scipy.io.loadmat("FFTSymb.mat")['FFTSymb'].tolist()
+INarray = scipy.io.loadmat("FFTSymb.mat")['FFTSymb']
+#INarray = scipy.io.loadmat("Proj1ModSymb.mat")['ModSymb']
 
+INarray = np.transpose(INarray)
 INarray = np.reshape(INarray, -1)
+
 output = []
-
 for i in range(len(INarray)):
-    if (np.real(INarray[i]) < 0):
-        if(np.imag(INarray[i]) < 0):
+    if (INarray[i].real < 0):
+        if((INarray[i].imag) < 0):
             x = 1
             y = 1
             output.append(x)
@@ -31,8 +36,8 @@ for i in range(len(INarray)):
             y = 0
             output.append(x)
             output.append(y)
-    elif (np.real(INarray[i]) > 0):
-        if(np.imag(INarray[i]) < 0):
+    elif (INarray[i].real > 0):
+        if(INarray[i].imag < 0):
             x = 0
             y = 1
             output.append(x)
@@ -44,13 +49,8 @@ for i in range(len(INarray)):
             output.append(y)
 
 
-scipy.io.savemat('EncryptedData.mat', dict(EncryptedData=np.array(output)), do_compression=True, oned_as='row')
-
-
-PnSeq = []
-Bitstream = []
-PnSeq = scipy.io.loadmat("EncryptedData.mat")['EncryptedData'].tolist()
-
+######################## Decrpyting Sequence ######################
+#Polynomial were using, f(x) = 1 + x + x^2 + x^ 5 + x^19
 reg1 = 1
 reg2 = 0
 reg3 = 0
@@ -71,11 +71,13 @@ reg17 = 0
 reg18 = 0
 reg19 = 0
 
+PnSeq = []
+Decrypt =[]
 for i in range(2**19-1):
-    PnSeq.append(reg19)
-    ##print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d  reg6: %d reg7: %d reg8: %d reg9: %d reg10: %d reg11: %d reg12: %d reg13: %d reg14: %d reg15: %d reg16: %d reg17: %d reg18: %d reg19: %d "% (i, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18, reg19)) 
+    PnSeq.append(reg19) 
     reg1,reg2,reg3,reg4,reg5,reg6,reg7,reg8,reg9,reg10,reg11,reg12,reg13, reg14,reg15,reg16,reg17,reg18,reg19  = reg19, (reg1+reg19)%2, (reg2+reg19)%2, reg3, reg4, (reg5+reg19)%2, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18   
-    for i in range(len(EncryptedData)):
-    Bitstream.append(EncryptedData[i]^PnSeq[i%(2**19-1)])
-    
-    scipy.io.savemat('BitStream.mat', dict(Bitstream=np.array([float(x) for x in Bitsrean])), do_compression=True, oned_as='row')
+for i in range(len(output)):
+    Decrypt.append(output[i]^PnSeq[i%(2**19-1)])
+
+
+scipy.io.savemat('DecryptedData.mat', dict(DecryptedData=np.array([float(x) for x in Decrypt])), do_compression=True, oned_as='row')
