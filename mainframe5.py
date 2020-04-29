@@ -1,59 +1,89 @@
-# CMPEN 462 Project Part 5
-#Python3
 #Team Hac
+#Project 5
 #Brandon Bastian
 #Gavin Fisher
-#Sean Sacchetti
-#Joe Brauckmann
-#Chris Magtibay
+#Joe Brauckman
+#Christopher Magtibay
 #Max Zhang
+#Sean Sacchetti
 
-#################### Import Numpy and Scipy libraries for matlab file reading/saving ###########################
+
+#Python3
 import numpy as np
 import scipy.io
 import math
 
-################Open File################
+###################################### Define code constants #####################################
+Pn_seq_length = 2**21-1
+PiOver4 = math.pi/4
+Pi74 = math.pi*7/4
+Pi34 = math.py*3/4
+Pi54 = math.py*5/4
+
+########################################### Open File #############################################
 bitstream = []
-bitstream = scipy.io.loadmat("Proj1InputData.mat")['InputData'][0].tolist()
-    
-#print(bitstream)
+bitstream = scipy.io.loadmat("Proj5InputData.mat")['InputData'][0].tolist()
 
-
-
-#Polynomial were using, f(x) = 1 + x^2 + x^5 + x^13 + x^21
-############  MSRG  ####################
-#print("\nMSRG OUTPUT\n")
-reg1 = 1
-reg2 = 0
-reg3 = 0
-reg4 = 0
-reg5 = 0
-reg6 = 0
-reg7 = 0
-reg8 = 0
-reg9 = 0
-reg10 = 0
-reg11 = 0
-reg12 = 0
-reg13 = 0
-reg14 = 0
-reg15 = 0
-reg16 = 0
-reg17 = 0
-reg18 = 0
-reg19 = 0
-reg20 = 0
-reg21 = 0
-
+#####################################  SSRG Encryption ############################################
+#Polynomial were using, f(x) = 1 + x^3 + x^31 
+Registers = [1] + [0 for i in range(20)]
 PnSeq = []
 Encrypt =[]
-for i in range(2**21-1):
-    PnSeq.append(reg21)
-    ##print("ITERATION #%d - reg1: %d   reg2: %d   reg3: %d   reg4: %d   reg5: %d  reg6: %d reg7: %d reg8: %d reg9: %d reg10: %d reg11: %d reg12: %d reg13: %d reg14: %d reg15: %d reg16: %d reg17: %d reg18: %d reg19: %d "% (i, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13, reg14, reg15, reg16, reg17, reg18, reg19)) 
-    reg1,reg2,reg3,reg4,reg5,reg6,reg7,reg8,reg9,reg10,reg11,reg12,reg13, reg14,reg15,reg16,reg17,reg18,reg19,reg20,reg21  = reg21, (reg1+reg21)%2, (reg2+reg21)%2, reg3, reg4, (reg5+reg21)%2, reg6, reg7, reg8, reg9, reg10, reg11, reg12, (reg13+reg21)%2, reg14, reg15, reg16, reg17, reg18, reg19, reg20   
+for i in range(Pn_seq_length):
+    PnSeq.append(Registers[0] ^ Registers[7])
+    tmpReg = Registers[1]^Registers[20]
+    Registers = [tmpReg] + Registers[:20]
+
 for i in range(len(bitstream)):
-    Encrypt.append(bitstream[i]^PnSeq[i%(2**21-1)])
+    Encrypt.append(bitstream[i]^PnSeq[i%(Pn_seq_length)])
     
 scipy.io.savemat('PnSeq.mat', dict(PnSeq=np.array([float(x) for x in PnSeq])), do_compression=True, oned_as='row')
 scipy.io.savemat('EncryptedData.mat', dict(Encrypt=np.array([float(x) for x in Encrypt])), do_compression=True, oned_as='row')
+
+########################################### QPSK Symbols ###########################################
+complexSym = []
+for j in range(int(len(Encrypt)/2)):
+    if Encrypt[j*2] == 0:
+        if Encrypt[j*2 + 1] == 0:
+            x = np.cos(PiOver4)
+            y = np.sin(PiOver4)
+        else:
+            x = np.cos(Pi74)
+            y = np.sin(Pi74)
+    else:
+        if Encrypt[j*2 + 1] == 0:
+            x = np.cos(Pi34)
+            y = np.sin(Pi34)
+        else:
+            x = np.cos(Pi54)
+            y = np.sin(Pi54)
+    complexSym.append(complex(x,y))
+
+scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array(complexSym)), do_compression=True, oned_as='row')
+
+############################################ IFFT Stage ##############################################
+ifftList = []
+i = [0]
+for k in range(math.ceil(len(complexSym)/1024)):
+    l = complexSym[1024*k:1024*k+1024]
+    ifftList.append(np.fft.ifft(l))
+
+scipy.io.savemat('IFFToutput.mat', dict(ifftList=np.array((ifftList)), do_compression=True, oned_as='row'))
+
+
+########################################## Cyclic Prefix ###############################################
+cyclicList = []
+for m in range(len(ifftList)):
+    y = ifftList[m][-70:]
+    x = ifftList[m][0:1023]
+    np.append(y,x)
+    cyclicList.append(y)
+
+scipy.io.savemat('CyclicPrefixoutput.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
+
+####################################### Add Noise to Signal #############################################
+
+scipy.io.savemat('SignalWithNoise.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
+
+
+exit()
