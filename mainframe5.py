@@ -7,7 +7,6 @@
 #Max Zhang
 #Sean Sacchetti
 
-
 #Python3
 import numpy as np
 import scipy.io
@@ -17,8 +16,8 @@ import math
 Pn_seq_length = 2**21-1
 PiOver4 = math.pi/4
 Pi74 = math.pi*7/4
-Pi34 = math.py*3/4
-Pi54 = math.py*5/4
+Pi34 = math.pi*3/4
+Pi54 = math.pi*5/4
 
 ########################################### Open File #############################################
 bitstream = []
@@ -42,6 +41,7 @@ scipy.io.savemat('EncryptedData.mat', dict(Encrypt=np.array([float(x) for x in E
 
 ########################################### QPSK Symbols ###########################################
 complexSym = []
+
 for j in range(int(len(Encrypt)/2)):
     if Encrypt[j*2] == 0:
         if Encrypt[j*2 + 1] == 0:
@@ -81,9 +81,31 @@ for m in range(len(ifftList)):
 
 scipy.io.savemat('CyclicPrefixoutput.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
 
-####################################### Add Noise to Signal #############################################
+####################################### Add Noise to Signal #############################################\
+Amean = 0
+ASD = 0.25
+Pmean = 0
+### Changing 22 degress to radians 
+phaseSD = 22 * math.pi / 180  
 
-scipy.io.savemat('SignalWithNoise.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
+NoiseAmp = np.random.normal(Amean, ASD, len(cyclicList))
+NoisePhase =  np.random.normal(Pmean, phaseSD, len(cyclicList))
+
+NoiseX = np.cos(NoisePhase)
+NoiseY = np.sin(NoisePhase)
+
+complexNoise = np.vectorize(complex)(NoiseX, NoiseY)
+complexNoise = np.multiply(complexNoise, NoiseAmp)
+
+NoiseIFFT = []
+for k in range(math.ceil(len(complexNoise)/1094)):
+    l = complexNoise[1094*k:1094*k+1094]
+    NoiseIFFT += np.fft.ifft(l).tolist()
+
+NoiseIFFT = np.array(NoiseIFFT)
+FinalNoise = np.add(NoiseIFFT, cyclicList)
+
+scipy.io.savemat('SignalWithNoise.mat', dict(NoiseSignal=np.array((NoiseSignal)), do_compression=True, oned_as='row'))
 
 
 exit()
