@@ -1,5 +1,5 @@
 #Team Hac
-#Project 2
+#Project 5 - Reciever 
 #Brandon Bastian
 #Gavin Fisher
 #Joe Brauckman
@@ -7,20 +7,17 @@
 #Max Zhang
 #Sean Sacchetti
 
-
 #Python3
 import numpy as np
 import scipy.io
 import math
-####################Define Code Constants#####################
+################################ Define Code Constants ##############################
 Pn_seq_length = 2**21-1
 
-
 ################ Open the file & read it using SCIPY library ################
-RxTransposed = np.transpose(scipy.io.loadmat('Proj2RxSymbStream.mat')['RxSymbStream']).tolist()
+RxTransposed = np.transpose(scipy.io.loadmat('SignalWithNoise.mat')['NoiseSignal']).tolist()
 
-
-################ Cyclic Prefix ################
+############################### Remove Cyclic Prefix ################################
 # Remove first 70 bits and store remaining 1024 into an array of lists
 # Each list is 1024 bytes 
 noPrefix = []
@@ -29,14 +26,8 @@ for i in range(len(RxTransposed)):
 
 noPrefix = np.reshape(noPrefix, -1)
 
-
 ################ Save output to matlab file ################
 scipy.io.savemat('RxOFDMSymb.mat', dict(OFDMSymbStream=np.array((noPrefix))), do_compression=True, oned_as='row')
-
-
-
-
-
 
 #################### Open IFFT OFDM Symbol Stream ######################
 OFDMSymb = []
@@ -52,16 +43,12 @@ for i in range(math.ceil(len(OFDMSymb)/1024)):
 ################### Create 2-D array for output ########################
 fftList = np.transpose(fftList)
 
-
 ################### Save 2-D array to matlab file ######################
 scipy.io.savemat('FFTSymb.mat', dict(FFTSymb=np.array((fftList))), do_compression=True, oned_as='row')
-
-
 
 ################## OFDM Modulation to Encrypted Data ##########################
 INarray = []
 INarray = scipy.io.loadmat("FFTSymb.mat")['FFTSymb']
-#INarray = scipy.io.loadmat("Proj1ModSymb.mat")['ModSymb']
 
 INarray = np.transpose(INarray)
 INarray = np.reshape(INarray, -1)
@@ -90,7 +77,6 @@ for i in range(len(INarray)):
             y = 0
             output.append(x)
             output.append(y)
-
 
 #####################################  SSRG Encryption ############################################
 #Polynomial were using, f(x) = 1 + x^3 + x^31 
