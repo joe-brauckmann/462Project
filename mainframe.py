@@ -80,7 +80,7 @@ for j in range(int(len(Encrypt)/2)):
 
 
 scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array(complexSym)), do_compression=True, oned_as='row')
-print(complexSym[0])
+
 ################IFFT#########################
 ifftList = []
 i = [0]
