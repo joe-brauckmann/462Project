@@ -75,15 +75,12 @@ for j in range(int(len(Encrypt)/2)):
         else:
             x = np.cos(math.pi*5/4)
             y = np.sin(math.pi*5/4)
-            #example. 
-            #complex(1,2)
-            #this is actually 1+2i 
             
     complexSym.append(complex(x,y))
 
 
 scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array(complexSym)), do_compression=True, oned_as='row')
-
+print(complexSym[0])
 ################IFFT#########################
 ifftList = []
 i = [0]
@@ -91,16 +88,16 @@ for k in range(math.ceil(len(complexSym)/1024)):
     l = complexSym[1024*k:1024*k+1024]
     ifftList.append(np.fft.ifft(l))
 
-#ifftdummy = ifftList.reshape(-1)
+ifftdummy = np.reshape(ifftList, -1)
 
-scipy.io.savemat('OFDMSymb.mat', dict(ifftList=np.array((ifftList)), do_compression=True, oned_as='row'))
+scipy.io.savemat('OFDMSymb.mat', dict(ifftList=np.array((ifftdummy)), do_compression=True, oned_as='row'))
 
 
 ################Cyclic Prefix################
 
 cyclicList = []
 
-for m in range(len(ifftList)):
+for m in range(len(ifftdummy)):
     x = ifftdummy[m*1024:m*1024+1024]
     y = ifftdummy[m*1024+1024-70:m*1024+1024]
     d = np.concatenate((y, x), axis = None)
@@ -110,9 +107,8 @@ for m in range(len(ifftList)):
     
 
 cyclicDummy = np.reshape(cyclicList, -1)
-
-scipy.io.savemat('TransSym.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
-
+#print(len(cyclicDummy))  
+scipy.io.savemat('TransSym.mat', dict(cyclicList=np.array((cyclicDummy)), do_compression=True, oned_as='row'))
 
 ################Up-Convert#################
 f = 100000000
@@ -124,8 +120,9 @@ for n in range(len(cyclicList)):
         x *= math.cos(2*math.pi*f*(n*1094+o+1)*symTime)
         y *= math.sin(2*math.pi*f*(n*1094+o+1)*symTime)
         cyclicList[n][o] = complex(x,y)
-        
-scipy.io.savemat('UpConvertedSym.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
 
+cyclicDummy = np.reshape(cyclicList, -1)  
+#print(len(cyclicDummy))    
+scipy.io.savemat('UpConvertedSym.mat', dict(cyclicList=np.array((cyclicDummy)), do_compression=True, oned_as='row'))
 
 exit()
