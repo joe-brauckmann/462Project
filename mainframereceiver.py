@@ -12,6 +12,9 @@
 import numpy as np
 import scipy.io
 import math
+####################Define Code Constants#####################
+Pn_seq_length = 2**21-1
+
 
 ################ Open the file & read it using SCIPY library ################
 RxTransposed = np.transpose(scipy.io.loadmat('Proj2RxSymbStream.mat')['RxSymbStream']).tolist()
