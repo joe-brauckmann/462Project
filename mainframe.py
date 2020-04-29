@@ -101,10 +101,15 @@ scipy.io.savemat('OFDMSymb.mat', dict(ifftList=np.array((ifftList)), do_compress
 cyclicList = []
 
 for m in range(len(ifftList)):
-    y = ifftList[m][-70:]
-    x = ifftList[m][0:1023]
-    np.append(y,x)
-    cyclicList.append(y)
+    x = ifftdummy[m*1024:m*1024+1024]
+    y = ifftdummy[m*1024+1024-70:m*1024+1024]
+    d = np.concatenate((y, x), axis = None)
+    if len(d) == 0:
+        break
+    cyclicList.append(d)
+    
+
+cyclicDummy = np.reshape(cyclicList, -1)
 
 scipy.io.savemat('TransSym.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
 
