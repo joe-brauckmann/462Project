@@ -59,26 +59,29 @@ for j in range(int(len(Encrypt)/2)):
             y = np.sin(Pi54)
     complexSym.append(complex(x,y))
 
-scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array(complexSym)), do_compression=True, oned_as='row')
+scipy.io.savemat('ComplexSymbol.mat', dict(complexSym=np.array((complexSym)), do_compression=True, oned_as='row'))
 
 ############################################ IFFT Stage ##############################################
 ifftList = []
-i = [0]
 for k in range(math.ceil(len(complexSym)/1024)):
     l = complexSym[1024*k:1024*k+1024]
     ifftList.append(np.fft.ifft(l))
 
-scipy.io.savemat('IFFToutput.mat', dict(ifftList=np.array((ifftList)), do_compression=True, oned_as='row'))
+ifftdummy = np.reshape(ifftList, -1)
 
+scipy.io.savemat('IFFToutput.mat', dict(ifftList=np.array((ifftdummy)), do_compression=True, oned_as='row'))
 
 ########################################## Cyclic Prefix ###############################################
 cyclicList = []
-for m in range(len(ifftList)):
-    y = ifftList[m][-70:]
-    x = ifftList[m][0:1023]
-    np.append(y,x)
-    cyclicList.append(y)
 
+for m in range(len(ifftList)):
+    x = ifftdummy[m*1024:m*1024+1024]
+    y = ifftdummy[m*1024+1024-70:m*1024+1024]
+    d = np.concatenate((y, x), axis = None)
+    if len(d) == 0:
+        break
+    cyclicList+=d.tolist()
+    
 scipy.io.savemat('CyclicPrefixoutput.mat', dict(cyclicList=np.array((cyclicList)), do_compression=True, oned_as='row'))
 
 ####################################### Add Noise to Signal #############################################\
@@ -88,9 +91,11 @@ Pmean = 0
 ### Changing 22 degress to radians 
 phaseSD = 22 * math.pi / 180  
 
+### Generate the random noise based off of parameters
 NoiseAmp = np.random.normal(Amean, ASD, len(cyclicList))
 NoisePhase =  np.random.normal(Pmean, phaseSD, len(cyclicList))
 
+### Get x,y coordinates of the random noise on the QPSK constillation 
 NoiseX = np.cos(NoisePhase)
 NoiseY = np.sin(NoisePhase)
 
@@ -105,7 +110,6 @@ for k in range(math.ceil(len(complexNoise)/1094)):
 NoiseIFFT = np.array(NoiseIFFT)
 FinalNoise = np.add(NoiseIFFT, cyclicList)
 
-scipy.io.savemat('SignalWithNoise.mat', dict(NoiseSignal=np.array((NoiseSignal)), do_compression=True, oned_as='row'))
-
+scipy.io.savemat('SignalWithNoise.mat', dict(FinalNoise=np.array((FinalNoise)), do_compression=True, oned_as='row'))
 
 exit()
