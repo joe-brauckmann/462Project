@@ -36,7 +36,7 @@ for i in range(Pn_seq_length):
 for i in range(len(bitstream)):
     Encrypt.append(bitstream[i]^PnSeq[i%(Pn_seq_length)])
     
-scipy.io.savemat('PnSeq.mat', dict(PnSeq=np.array([float(x) for x in PnSeq])), do_compression=True, oned_as='row')
+#scipy.io.savemat('PnSeq.mat', dict(PnSeq=np.array([float(x) for x in PnSeq])), do_compression=True, oned_as='row')
 scipy.io.savemat('EncryptedData.mat', dict(Encrypt=np.array([float(x) for x in Encrypt])), do_compression=True, oned_as='row')
 
 ########################################### QPSK Symbols ###########################################
@@ -111,5 +111,93 @@ NoiseIFFT = np.array(NoiseIFFT)
 FinalNoise = np.add(NoiseIFFT, cyclicList)
 
 scipy.io.savemat('SignalWithNoise.mat', dict(FinalNoise=np.array((FinalNoise)), do_compression=True, oned_as='row'))
+
+############################################################### END OF TRANSMITTER STAGE #################################################################
+
+
+
+############################################################## BEGIN RECIEVER STAGE ######################################################################
+
+############################### Reshape signal withj noise ##########################
+FinalNoise = np.transpose(FinalNoise).tolist()
+
+############################### Remove Cyclic Prefix ################################
+# Remove first 70 bits and store remaining 1024 into an array of lists
+# Each list is 1024 bytes 
+noPrefix = []
+for i in range(len(FinalNoise)):
+    noPrefix += FinalNoise[1094*i+70:1094*i+1094]
+
+noPrefix = np.reshape(noPrefix, -1)
+
+################ Save output to matlab file ################
+scipy.io.savemat('RxCpRemove.mat', dict(RxCpRemove=np.array((noPrefix))), do_compression=True, oned_as='row')
+
+#################### Use FFT function ######################
+fftList = []
+for i in range(math.ceil(len(noPrefix)/1024)):
+    temp = noPrefix[1024*i:1024*i+1024]
+    temp = np.fft.fftn(temp)
+    fftList.append(temp)
+
+################### Create 2-D array for output ########################
+fftList = np.transpose(fftList)
+scipy.io.savemat('RxFFT.mat', dict(RxFFT=np.array((fftList))), do_compression=True, oned_as='row')
+
+################## OFDM Modulation to Encrypted Data ##########################
+INarray = []
+INarray = fftList
+
+INarray = np.transpose(INarray)
+INarray = np.reshape(INarray, -1)
+
+output = []
+for i in range(len(INarray)):
+    if (INarray[i].real < 0):
+        if((INarray[i].imag) < 0):
+            x = 1
+            y = 1
+            output.append(x)
+            output.append(y)
+        else:
+            x = 1
+            y = 0
+            output.append(x)
+            output.append(y)
+    elif (INarray[i].real > 0):
+        if(INarray[i].imag < 0):
+            x = 0
+            y = 1
+            output.append(x)
+            output.append(y)
+        else:
+            x = 0
+            y = 0
+            output.append(x)
+            output.append(y)
+
+scipy.io.savemat('RxEncyrpted.mat', dict(FFTSymb=np.array((output))), do_compression=True, oned_as='row')
+#####################################  SSRG Encryption ############################################
+#Polynomial were using, f(x) = 1 + x^3 + x^31 
+Registers = [1] + [0 for i in range(20)]
+PnSeq = []
+Decrypt =[]
+for i in range(Pn_seq_length):
+    PnSeq.append(Registers[0] ^ Registers[7])
+    tmpReg = Registers[1]^Registers[20]
+    Registers = [tmpReg] + Registers[:20]
+
+for i in range(len(output)):
+    Decrypt.append(output[i]^PnSeq[i%(Pn_seq_length)])
+    
+scipy.io.savemat('Decryptedata.mat', dict(Decrypt=np.array([float(x) for x in Decrypt])), do_compression=True, oned_as='row')
+
+##################################### Test for error rate ##############################################
+n = 0
+tester = scipy.io.loadmat("Proj5InputData.mat")['InputData'][0].tolist()
+for i in range(len(tester)):
+    if tester[i] != Decrypt[i]:
+        n+=1 
+print(n/len(tester))
 
 exit()
