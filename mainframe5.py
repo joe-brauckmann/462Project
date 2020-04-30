@@ -141,7 +141,7 @@ for i in range(math.ceil(len(noPrefix)/1024)):
     fftList.append(temp)
 
 ################### Create 2-D array for output ########################
-fftList = np.transpose(fftList)
+fftList = np.reshape(fftList, -1)
 scipy.io.savemat('RxFFT.mat', dict(RxFFT=np.array((fftList))), do_compression=True, oned_as='row')
 
 ################## OFDM Modulation to Encrypted Data ##########################
