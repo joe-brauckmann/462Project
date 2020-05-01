@@ -36,7 +36,6 @@ for i in range(Pn_seq_length):
 for i in range(len(bitstream)):
     Encrypt.append(bitstream[i]^PnSeq[i%(Pn_seq_length)])
     
-#scipy.io.savemat('PnSeq.mat', dict(PnSeq=np.array([float(x) for x in PnSeq])), do_compression=True, oned_as='row')
 scipy.io.savemat('EncryptedData.mat', dict(Encrypt=np.array([float(x) for x in Encrypt])), do_compression=True, oned_as='row')
 
 ########################################### QPSK Symbols ###########################################
@@ -140,8 +139,7 @@ for i in range(math.ceil(len(noPrefix)/1024)):
     temp = np.fft.fftn(temp)
     fftList.append(temp)
 
-################### Create 2-D array for output ########################
-fftList = np.reshape(fftList, -1)
+fftList = np.transpose(fftList)
 scipy.io.savemat('RxFFT.mat', dict(RxFFT=np.array((fftList))), do_compression=True, oned_as='row')
 
 ################## OFDM Modulation to Encrypted Data ##########################
@@ -198,6 +196,6 @@ tester = scipy.io.loadmat("Proj5InputData.mat")['InputData'][0].tolist()
 for i in range(len(tester)):
     if tester[i] != Decrypt[i]:
         n+=1 
-print(n/len(tester))
+print('But Error Rate: ', (n/len(tester)) * 100 ,'%')
 
 exit()
